@@ -140,6 +140,9 @@ and `penpot.generateMarkup` produce CSS and HTML/SVG from shapes.
 - **Library colours, typographies, components, documentation board**: `references/design-system.md`.
 - **Light/dark variants and design tokens**: `references/theming.md`. Read it before creating any
   token: colour tokens can't carry alpha, and that dictates the whole catalog.
+- **Interactive prototyping, animations & overlays**: `references/prototyping.md`. Wiring flows, `addInteraction` API, modal overlays, transitions and flow audits.
+- **Design-to-Code pipelines**: `references/design-to-code.md`. Turning frames into production HTML/CSS, React components, layout/token extraction and Style Dictionary mappings.
+- **Design system audits & maintenance**: `references/design-system-audit.md`. Auditing palette drift, token migrations, WCAG AA compliance and component consistency.
 - **Every API trap, as symptom → cause → fix**: `references/api-gotchas.md`. Skim it when
   something behaves oddly.
 - **Frames, platform chrome, the budget worked example**: `references/layout.md`.
