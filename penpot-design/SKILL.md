@@ -37,6 +37,12 @@ at any moment. A call that fails with `Cannot modify a page that is not currentl
 `await penpot.openPage(pageId)` at the top of the same call that mutates. `penpot.createPage()`
 does not switch to the new page by itself.
 
+### Using Penpot Workspace URLs
+When the user shares a Penpot URL (e.g. `http://.../#/workspace?page-id=...&board-id=...`):
+- Extract `page-id` to immediately switch with `await penpot.openPage(pageId)`.
+- Extract `board-id` to locate the reference shape/board directly instead of scanning the full page tree.
+- Extract `file-id` and `team-id` to verify workspace context.
+
 ## Helper API
 
 `const h = storage.h;` at the top of each call. Coordinates are **absolute page coordinates**;
@@ -111,6 +117,9 @@ Penpot tab. So:
 
 A single timeout is not yet a hang: the first `export_shape` after a plugin reload can time out
 while the renderer warms up. Send `return "ping"`; if it answers, retry the export once.
+
+- **`No Penpot instance connected for user token`**: The MCP HTTP/SSE transport is up, but the Penpot plugin is not currently active or connected via WebSocket (`/mcp/ws`) in the browser tab. Ask the user to verify if the file is open and reconnect the MCP plugin inside Penpot.
+- **`Duplicate connection for given user token; rejecting new connection`**: An existing client or orphaned WebSocket session is holding the token. In local self-hosted environments (e.g. Docker), restarting the MCP service (`docker restart penpot-penpot-mcp-1` or compose restart) clears stale sessions immediately.
 
 If it hangs for real: say so in a sentence, ask the user to reopen the plugin, and meanwhile keep
 doing the work that doesn't need Penpot. After reconnecting, the **document** is intact and the

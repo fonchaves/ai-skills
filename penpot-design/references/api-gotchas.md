@@ -17,6 +17,9 @@ Format: **symptom**: cause. Fix.
 
 ## Connection, parallelism, timeouts
 
+- **`No Penpot instance connected for user token`**: HTTP/SSE endpoint returned 200, but no active WebSocket bridge from the Penpot browser plugin exists for this user token. The user must open the file and launch the MCP plugin in Penpot.
+- **`Duplicate connection for given user token; rejecting new connection`**: A stale or duplicate client connection exists with the same token. Clear orphaned sessions by restarting the MCP container (`docker restart penpot-penpot-mcp-1`) or waiting for heartbeat timeout.
+- **Workspace URLs carry exact targets**: URLs containing `page-id=<UUID>` and `board-id=<UUID>` allow pinpointing the target page and shape instantly without traversal.
 - **Every call times out, even `return "ping"`**: the plugin is hung. Only the user can fix it, by
   reopening the Penpot MCP plugin in the Penpot tab. Tell them plainly and keep doing work that
   doesn't need Penpot. After reconnecting, the document and the token catalog are intact, and a
