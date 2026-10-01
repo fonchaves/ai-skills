@@ -10,6 +10,7 @@ same folder works in Claude Code, OpenAI Codex, Google Antigravity and any other
 | Skill | What it does | Needs |
 |---|---|---|
 | [penpot-design](penpot-design/SKILL.md) | Designs in Penpot: screens, mockups, dashboards, UI kits, design systems, components, colour and type styles, light/dark themes, design tokens, prototypes, design-to-code and design-system audits. Ships a tested helper library, a 70-icon set and a list of the Penpot API traps that break designs or hang the plugin. | A Penpot MCP server, with the Penpot MCP plugin open in the file you want to edit. |
+| [brainstorm-gaps](brainstorm-gaps/SKILL.md) | Stress-tests an idea, project or plan to surface what you aren't seeing: unstated assumptions, failure modes, dismissed alternatives, hidden costs. Asks short rounds of ranked questions, each with a recommended answer and the cheapest way to check it, and stops early. Writes no files. | Nothing. Runs only when you invoke it by name. |
 
 ## Installation
 
@@ -68,13 +69,24 @@ The behaviour documented here was observed on the Penpot build of September 2026
 connection drops, the plugin hangs or the MCP reports an error, check
 [api-gotchas.md](penpot-design/references/api-gotchas.md) first.
 
+## brainstorm-gaps
+
+Invoke it explicitly with the idea in the same message: `/brainstorm-gaps <idea>` in Claude Code,
+`$brainstorm-gaps <idea>` in Codex. It never loads on its own, so it stays out of ordinary
+requests.
+
+A session plays the idea back as "you said" and "I'm assuming", then asks 3–5 ranked gaps per
+round and ends with three lists: what was decided, the open bets, and the cheapest checks to run
+first.
+
 ## Repository layout
 
 ```
 <skill-name>/
 ├── SKILL.md       # entry point: frontmatter (name, description) and the core workflow
 ├── references/    # detail the skill loads on demand
-└── scripts/       # code the skill runs or injects
+├── scripts/       # code the skill runs or injects
+└── agents/        # optional host-specific config, e.g. openai.yaml for Codex
 ```
 
 ## Contributing
