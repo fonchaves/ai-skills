@@ -34,11 +34,14 @@ commit messages and docs.
   run in `SKILL.md`. Move topic-specific detail into `references/`, and link each reference from
   `SKILL.md` with a line saying when to read it. A reference that `SKILL.md` never mentions will
   never be loaded.
-- **User-invoked skills opt out of auto-loading on every host.** For a skill that should run only
-  when the user names it, set `disable-model-invocation: true` in the frontmatter (Claude Code)
-  and add `agents/openai.yaml` with `policy: allow_implicit_invocation: false` (Codex), and also
-  say so in the description for hosts that support neither. A description alone doesn't stop a
-  host from loading the skill whenever a request matches it.
+- **Keep a skill out of ordinary requests with its description, not by disabling model
+  invocation.** Say in the description that the skill runs only when the user names it or asks
+  for it explicitly. Disable model invocation (`disable-model-invocation: true` in the
+  frontmatter for Claude Code, `agents/openai.yaml` with `policy: allow_implicit_invocation:
+  false` for Codex) only when loading the skill by surprise would do harm. With the flag set,
+  Claude Code hides the skill from the model and runs it only when the message starts with
+  `/<skill-name>`. A mention in the middle of a message is plain text, and the model has no
+  supported way to load the skill.
 - **Paths are relative to the skill folder** (`references/theming.md`, not an absolute path).
 - **Stay host-neutral.** Don't assume one agent product. Refer to MCP tools by the tool names
   their server exposes (`execute_code`, `export_shape`).
