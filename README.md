@@ -10,7 +10,7 @@ same folder works in Claude Code, OpenAI Codex, Google Antigravity and any other
 | Skill | What it does | Needs |
 |---|---|---|
 | [penpot-design](penpot-design/SKILL.md) | Designs in Penpot: screens, mockups, dashboards, UI kits, design systems, components, colour and type styles, light/dark themes, design tokens, prototypes, design-to-code and design-system audits. Ships a tested helper library, a 70-icon set and a list of the Penpot API traps that break designs or hang the plugin. | A Penpot MCP server, with the Penpot MCP plugin open in the file you want to edit. |
-| [brainstorm-gaps](brainstorm-gaps/SKILL.md) | Stress-tests an idea, project or plan to surface what you aren't seeing: unstated assumptions, failure modes, dismissed alternatives, hidden costs. Asks short rounds of ranked questions, each with a recommended answer and the cheapest way to check it, and stops early. Writes no files. | Nothing. Runs only when you invoke it by name. |
+| [brainstorm-gaps](brainstorm-gaps/SKILL.md) | Stress-tests an idea, project or plan to surface what you aren't seeing: unstated assumptions, failure modes, dismissed alternatives, hidden costs. Asks short rounds of ranked questions, each with a recommended answer and the cheapest way to check it, and stops early. Writes no files. | Nothing. Loads only when you name it or ask for blind spots. |
 | [release-notes](release-notes/SKILL.md) | Picks the Conventional Commits type that decides a change's semver bump, and writes the release note users read, in each of the project's languages, as a per-change file that a script gathers at release. Reads the project's releasing guide, and can set one up with release-please. | A project whose releases a tool such as release-please numbers from commit types. |
 
 ## Installation
@@ -72,9 +72,10 @@ connection drops, the plugin hangs or the MCP reports an error, check
 
 ## brainstorm-gaps
 
-Invoke it explicitly with the idea in the same message: `/brainstorm-gaps <idea>` in Claude Code,
-`$brainstorm-gaps <idea>` in Codex. It never loads on its own, so it stays out of ordinary
-requests.
+Start a message with it (`/brainstorm-gaps <idea>` in Claude Code, `$brainstorm-gaps <idea>` in
+Codex), or name it anywhere in a longer request ("use brainstorm-gaps to find what this idea is
+missing"). Its description limits it to explicit requests, either naming the skill or asking for
+blind spots, gaps or risks, so ordinary requests don't load it.
 
 A session plays the idea back as "you said" and "I'm assuming", then asks 3–5 ranked gaps per
 round and ends with three lists: what was decided, the open bets, and the cheapest checks to run
