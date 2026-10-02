@@ -1,7 +1,6 @@
 ---
 name: brainstorm-gaps
 description: Stress-test an idea, project, feature or plan to surface the gaps the user isn't seeing (unstated assumptions, failure modes, dismissed alternatives, hidden costs, second-order effects) through short rounds of ranked questions, each with a recommended answer and the cheapest way to check it. Use only when the user invokes it by name or explicitly asks to find blind spots, gaps, holes or risks in what they're planning ("what am I missing?", "poke holes in this", "stress-test this idea"). Not a spec or planning workflow, so it writes no files and starts no implementation. Not for reviewing existing code.
-disable-model-invocation: true
 ---
 
 # Brainstorm gaps
