@@ -68,10 +68,17 @@ A script that reads the version from the manifest, moves the pending notes into 
 second run changes nothing), and deletes the pending files. Take the release's day from the heading
 release-please writes in `CHANGELOG.md`, so the two agree.
 
-Run it in CI right after the release action, whenever `prs_created` is true: check out the release
-branch (`release-please--branches--<main branch>`) with the same token, run the gatherer, and commit
-and push only when something changed. release-please rewrites that branch on each run, which drops
-the commit; the next run gathers the notes again.
+Run it in CI right after the release action, on every push to the main branch: find the open
+release pull request (release-please labels it `autorelease: pending`; `gh pr list --label
+"autorelease: pending" --json headRefName`), check out its branch with the same token, and when
+notes wait there, run the gatherer and commit and push. With none waiting, skip the install. When
+release-please rewrites its branch, which drops that commit, the next run gathers the notes again.
+
+- Don't guess the branch's name: with a `package-name` in the config it carries the component
+  (`release-please--branches--main--components--<name>`).
+- Don't run only when the action reports `prs_created`: a push that changes nothing in the release,
+  such as a `ci` commit, leaves the pull request untouched, and its notes would wait for the next
+  feature or fix.
 
 Keep the released notes where the product reads them only on its changelog page. In an app whose
 pages send their whole locale file to the browser, notes added to that file weigh on every page.
