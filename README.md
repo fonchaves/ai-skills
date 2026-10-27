@@ -11,6 +11,7 @@ same folder works in Claude Code, OpenAI Codex, Google Antigravity and any other
 |---|---|---|
 | [penpot-design](penpot-design/SKILL.md) | Designs in Penpot: screens, mockups, dashboards, UI kits, design systems, components, colour and type styles, light/dark themes, design tokens, prototypes, design-to-code and design-system audits. Ships a tested helper library, a 70-icon set and a list of the Penpot API traps that break designs or hang the plugin. | A Penpot MCP server, with the Penpot MCP plugin open in the file you want to edit. |
 | [brainstorm-gaps](brainstorm-gaps/SKILL.md) | Stress-tests an idea, project or plan to surface what you aren't seeing: unstated assumptions, failure modes, dismissed alternatives, hidden costs. Asks short rounds of ranked questions, each with a recommended answer and the cheapest way to check it, and stops early. Writes no files. | Nothing. Runs only when you invoke it by name. |
+| [release-notes](release-notes/SKILL.md) | Picks the Conventional Commits type that decides a change's semver bump, and writes the release note users read, in each of the project's languages, as a per-change file that a script gathers at release. Reads the project's releasing guide, and can set one up with release-please. | A project whose releases a tool such as release-please numbers from commit types. |
 
 ## Installation
 
@@ -78,6 +79,19 @@ requests.
 A session plays the idea back as "you said" and "I'm assuming", then asks 3–5 ranked gaps per
 round and ends with three lists: what was decided, the open bets, and the cheapest checks to run
 first.
+
+## release-notes
+
+Loads when you finish a change, commit or open a pull request in a project whose instructions ask
+for release notes, or when you ask for a changelog entry or which bump a change deserves. It reads
+the project's releasing guide (`docs/releasing.md` or wherever the agent instructions point), checks
+each commit's type against whether a user would notice the change, and writes one note per change
+in every language the project serves, using the words the product's interface already uses.
+
+In a project with no guide, it offers to set one up from
+[project-setup.md](release-notes/references/project-setup.md): release-please, the pending notes,
+the script that gathers them at release, and the guide itself. The guide must work without the
+skill, since agents in CI or on another machine may not have it.
 
 ## Repository layout
 
