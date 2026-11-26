@@ -31,10 +31,18 @@ one project at once collide in the same files and the same deploy.
 
 ## 3. From request to issue
 
+A question or an investigation that changes no code needs no issue: answer it in the chat. An issue
+is for a code change, and it comes before any work on it, worker included. Its `bot:working` label
+is what tells the scheduled check and the other bots that the project is busy, and between the start
+of the work and the pull request nothing else says so; it also keeps the request on record if the
+pull request is closed, replaced or never opened.
+
 From a chat request, restate it in a few lines and ask only what you can't settle from the
-repository, ai-memory or the conversation. Once the owner agrees, open an issue that records the
-request and the decisions, label it `bot:working`, and post its link in the chat. An issue that
-arrived labeled `bot`: swap the label for `bot:working`.
+repository, ai-memory or the conversation. Once the owner agrees, open the issue, label it
+`bot:working`, and post its link in the chat. Keep its body to two to five lines: the request and the
+decisions already taken, no plan (the pull request says how). When an investigation turns into a
+fix, the issue starts there and names what the investigation found. An issue that arrived labeled
+`bot`: swap the label for `bot:working`.
 
 If you run on a lighter model (a scheduled run on Sonnet, say) and part of the issue needs deep
 reasoning (hard debugging, security, migrations, architecture), delegate that part to a Claude
@@ -44,8 +52,10 @@ the chat once they answer.
 
 ## 4. Do the work
 
-Work in a fresh Orca worktree from `origin/main` (`orca worktree create`), on a branch named
-`<bot>/<issue>-<short-slug>`. For larger changes start a worker there (`orca worktree create --agent
+Work in a fresh Orca worktree from `origin/main` (`orca worktree create --branch ...`), on a branch
+named `<bot>/<issue>-<short-slug>`, where `<bot>` is your own short name in lowercase (`titico`,
+`cvonico`, `mindico`): never the owner's login or the tool's default prefix, which hide that the
+work is a bot's. For larger changes start a worker there (`orca worktree create --agent
 ... --effort ...`), chosen as the owner's global rules say: Antigravity by default, Claude when the
 task needs it, never Codex, whose quota is kept for review. Review the worker's result before
 anything is pushed.
