@@ -95,9 +95,11 @@ On the owner's explicit yes for that pull request:
    verdict and reasons, and anything decided on the way. Decisions taken in a chat are otherwise
    lost to the record.
 2. Merge with the method the repository allows (`gh pr merge <n> --rebase`, `--squash` or `--merge`).
-3. If the change builds something to deploy, wait for the workflow on `main` to finish, then deploy
-   with the command AGENTS.md names and confirm the environment runs the new build. A change the
-   workflows skip (docs only) builds nothing: say so and don't deploy.
+3. If the change builds something to deploy, wait for the workflow's run for the merged commit to
+   succeed, then deploy with the command AGENTS.md names and confirm the environment runs the new
+   build. If that run failed, don't deploy: a deploy script that picks the last successful build
+   would ship an older one, and the environment would still look healthy. A change the workflows
+   skip (docs only) builds nothing: say so and don't deploy.
 4. If the workflow or the deploy fails, say what failed and offer a revert pull request. Never retry
    a deploy more than once on your own.
 
