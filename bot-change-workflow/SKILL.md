@@ -52,13 +52,14 @@ the chat once they answer.
 
 ## 4. Do the work
 
-Work in a fresh Orca worktree from `origin/main` (`orca worktree create --branch ...`), on a branch
-named `<bot>/<issue>-<short-slug>`, where `<bot>` is your own short name in lowercase (`titico`,
-`cvonico`, `mindico`): never the owner's login or the tool's default prefix, which hide that the
-work is a bot's. For larger changes start a worker there (`orca worktree create --agent
-... --effort ...`), chosen as the owner's global rules say: Antigravity by default, Claude when the
-task needs it, never Codex, whose quota is kept for review. Review the worker's result before
-anything is pushed.
+Work in a fresh Orca worktree from `origin/main`: `orca worktree create --name <issue>-<short-slug>
+--branch <bot>/<issue>-<short-slug> --base-branch origin/main`, where `<bot>` is your own short name
+in lowercase (`titico`, `cvonico`, `mindico`). `--name` is required and names the workspace;
+`--branch` names the Git branch, which must never carry the owner's login or the tool's default
+prefix, since those hide that the work is a bot's. For larger changes start a worker in that same
+worktree with `orca agent launch --worktree branch:<bot>/<issue>-<short-slug> --agent ... --effort
+...`, chosen as the owner's global rules say: Antigravity by default, Claude when the task needs it,
+never Codex, whose quota is kept for review. Review the worker's result before anything is pushed.
 
 Run the checks AGENTS.md asks for the change, follow its commit and release-note rules, and open a
 pull request that says `Closes #<issue>`. Swap the label for `bot:review`.
