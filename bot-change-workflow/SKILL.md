@@ -56,9 +56,11 @@ Work in a fresh Orca worktree from `origin/main`: `orca worktree create --name <
 --branch <bot>/<issue>-<short-slug> --base-branch origin/main`, where `<bot>` is your own short name
 in lowercase (`titico`, `cvonico`, `mindico`). `--name` is required and names the workspace;
 `--branch` names the Git branch, which must never carry the owner's login or the tool's default
-prefix, since those hide that the work is a bot's. For larger changes start a worker in that same
-worktree with `orca agent launch --worktree branch:<bot>/<issue>-<short-slug> --agent ... --effort
-...`, chosen as the owner's global rules say: Antigravity by default, Claude when the task needs it,
+prefix, since those hide that the work is a bot's. Run it with `--json` and keep the worktree it
+returns: Orca adds a numeric suffix to the branch when that name is already taken (a stale or
+retried workspace), so the name you asked for can point at another worktree. For larger changes
+start a worker in that same worktree, selected by what `worktree create` returned (`orca agent
+launch --worktree id:<returned id> --agent ... --effort ...`), chosen as the owner's global rules say: Antigravity by default, Claude when the task needs it,
 never Codex, whose quota is kept for review. Review the worker's result before anything is pushed.
 
 Run the checks AGENTS.md asks for the change, follow its commit and release-note rules, and open a
