@@ -88,13 +88,15 @@ comment `@codex review` to ask for the next round.
 
 What gets fixed in the pull request, unless AGENTS.md sets other limits:
 
-- P1 and security findings: always.
+- P0, P1 and security findings: always, whatever the round, even when the pattern is app-wide.
 - P2 findings within the pull request's scope: during the first three rounds. From the fourth, each
   new P2 goes to a follow-up issue (or the backlog file AGENTS.md names) and the pull request moves
   on to Pilho. Every round finds rarer cases, and each costs a review and a worker's run.
-- A finding about a pattern the whole app shares (every GET handler, every form): to a follow-up
+- A P2 finding about a pattern the whole app shares (every GET handler, every form): to a follow-up
   issue at once. Fixing it one instance at a time only shows Codex the next instance, round after
   round.
+
+Only P2 findings are ever deferred.
 
 Answer every comment: what was fixed in which commit, why it doesn't apply, or which follow-up issue
 now carries it. Then resolve the thread, whatever the answer. Codex's summary and Pilho's gate count
