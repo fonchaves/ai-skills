@@ -26,8 +26,12 @@ When a request conflicts with a recorded decision, stop and ask the owner.
 
 Before starting, look for an open issue labeled `bot:working` in the repository. If one exists, tell
 the owner what is in flight and, with their agreement, queue the new request as an issue labeled
-`bot`; the project's scheduled check hands it to you when the current change is done. Two changes in
-one project at once collide in the same files and the same deploy.
+`bot`; the project's scheduled check hands it to you when the current change is done. Two changes
+worked on in one project at once collide in the same files and the same deploy.
+
+A change in `bot:review` (waiting for Codex, Pilho or the owner) doesn't hold the next one back:
+start it. Several pull requests can then wait at once, and the rebase before asking (section 7)
+checks each against what merged before it.
 
 ## 3. From request to issue
 
@@ -48,15 +52,16 @@ Your own label changes wake you. Orca's GitHub app wakes the project's bot in a 
 ("Take over issue labeled ...") whenever an issue's label changes, even when you or your worker
 changed it as the owner, and that run's final message is posted on the issue. When such a wake names
 an issue you or your worker already hold (you opened it, a worker runs on it, or the pull request
-that closes it is yours), it is the echo of your own step: start nothing, and end the run with one
-line saying where the work stands (the worker, or the pull request's link), without mentioning the
-owner, since a mention notifies them for nothing.
+that closes it is yours), it is the echo of your own step: start nothing, read nothing, and end the run with exactly this one
+line, in English: `Already in progress: <the pull request's link, or "worker in <workspace>">.` Orca
+posts it on the issue and puts the owner's mention in front of it itself; anything longer is only
+more to read on the phone.
 
-If you run on a lighter model (a scheduled run on Sonnet, say) and part of the issue needs deep
-reasoning (hard debugging, security, migrations, architecture), delegate that part to a Claude
-worker with `--model opus --effort high`. If the whole issue is like that, or needs the owner's
-decisions, don't start it there: tell the owner in the chat why, label it `bot:blocked`, and go on in
-the chat once they answer.
+If part of the issue needs deep reasoning (hard debugging, security, migrations, architecture),
+give that part to an Antigravity worker with `--effort high`, and to a Claude worker (`--model opus
+--effort high`) only after Antigravity fell short on it. If the whole issue needs the owner's
+decisions, don't start it: tell the owner in your Home Chat (section 6) why, label it `bot:blocked`,
+and go on there once they answer.
 
 ## 4. Do the work
 
@@ -66,10 +71,19 @@ in lowercase (`titico`, `cvonico`, `mindico`). `--name` is required and names th
 `--branch` names the Git branch, which must never carry the owner's login or the tool's default
 prefix, since those hide that the work is a bot's. Run it with `--json` and keep the worktree it
 returns: Orca adds a numeric suffix to the branch when that name is already taken (a stale or
-retried workspace), so the name you asked for can point at another worktree. For larger changes
-start a worker in that same worktree, selected by what `worktree create` returned (`orca agent
-launch --worktree id:<returned id> --agent ... --effort ...`), chosen as the owner's global rules say: Antigravity by default, Claude when the task needs it,
-never Codex, whose quota is kept for review. Review the worker's result before anything is pushed.
+retried workspace), so the name you asked for can point at another worktree.
+
+Workers do the work; you decide and check. You run on Claude, whose quota is the owner's scarcest
+after Codex's and is shared with their own sessions, and every file you read and every check you
+watch in your own conversation is spent from it. Reading the code to plan, implementing, running the
+checks and fixing review findings are a worker's job: start one in that same worktree, selected by
+what `worktree create` returned (`orca agent launch --worktree id:<returned id> --agent ... --effort
+...`), for anything beyond a few lines. The worker is Antigravity (`--agent antigravity`), whose
+quota is about twenty times Claude's: for every kind of task, security, migrations and hard
+debugging included (with `--effort high` for those). A Claude worker (`--agent claude --model
+sonnet`, or `opus` with high effort) only after an Antigravity attempt at that task fell short, and
+you say so in your report. Never Codex, whose quota is kept for review. Review the worker's result
+(its diff and the checks' outcome, not the whole code again) before anything is pushed.
 A report a worker writes to a file stays in its agent's own folders on the server, outside the
 repository, and is lost with the session: carry what later steps need into the issue, a follow-up
 issue or the pull request.
@@ -104,6 +118,11 @@ an open thread as an unresolved finding even once it is answered, and a gate tha
 pushes the deferred work back into the pull request. Pilho reads the answers and can still say "not
 yet".
 
+A worker that fixes a round's findings doesn't know these rules unless its task says them. Put them
+in every such task: the round number, which findings it fixes and which it leaves for a follow-up
+issue (you open those), and that it answers and resolves every thread. Without them a worker fixes
+every finding, round after round.
+
 Don't poll. Schedule a wake on the pull request's CI result and next review with `orca automations
 create --once`, with a deadline of about 30 minutes. A review with findings wakes you; a clean one
 arrives as a plain comment from Codex ("Didn't find any major issues") that does not. So when the
@@ -116,7 +135,15 @@ if that also goes unanswered, tell the owner in the chat instead of waiting.
 When the checks pass (or the change touches only files the workflows ignore, such as docs and
 markdown) and Codex has no unresolved finding, ask Pilho Reviewer to clear the pull request:
 `orca orchestration send --to bot:"Pilho Reviewer" --type question`, naming the repository and the
-pull request. Its verdict decides how you ask the owner:
+pull request.
+
+Every question to the owner goes to your Home Chat, so they answer in one place rather than in a
+chat per run. A run that started elsewhere (a scheduled check, a label wake, a review's wake) hands
+the question there: `orca orchestration send --to bot:<your name> --type handoff --subject
+"<repo>#<pr>: <what is asked>" --body-file <file>`, with the pull request's link, Pilho's verdict
+and reasons, what the deploy takes along, and the question, then ends with one line saying it did.
+
+Pilho's verdict decides how you ask the owner:
 
 - **go**: in the chat, in three lines at most: what changed and what was checked.
 - **attention**: in the chat as well, with Pilho's reason and the few diff lines that carry the
@@ -129,6 +156,12 @@ A repository whose AGENTS.md says every pull request goes to the owner on GitHub
 it is ready for their review.
 
 ## 7. Asking, merging and deploying
+
+Before asking, check that the pull request's last checks ran on top of the current `main`. If `main`
+moved since (another pull request merged), rebase the branch on `origin/main`, push it, and wait for
+the checks on the new head; Codex needn't review again unless the rebase changed the diff. A merge
+by rebase otherwise lands a combination of commits that no check ever ran, and the merge before it
+may have changed the checks themselves.
 
 Every question about merging also says what the deploy takes along: the merges already on `main`
 that the environment doesn't run yet (AGENTS.md says how to read what it runs). End it with "Posso
@@ -166,6 +199,6 @@ rm`); the branch is already gone from GitHub.
   not yours.
 - Deploy anything AGENTS.md doesn't name for bots, or touch Coolify's settings, the system Docker,
   real secrets or `.env` values, or repository settings and secrets.
-- Work on more than one change at once in a project.
+- Have more than one change in `bot:working` at once in a project.
 - Spend runs polling: wake on events and deadlines, and keep each run short, since the owner's
   quota is shared with their own sessions.
