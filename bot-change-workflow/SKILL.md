@@ -157,8 +157,8 @@ it is ready for their review.
 
 ## 7. Asking, merging and deploying
 
-Before asking, and again right before merging, check that the pull request's last checks ran on top
-of the current `main`. If `main` moved since (another pull request merged, even while the owner was
+Before asking, and again right before merging, run `git fetch origin` and check that the pull
+request's last checks ran on top of the current `origin/main`. If `main` moved since (another pull request merged, even while the owner was
 deciding), rebase the branch on `origin/main`, push it with `git push --force-with-lease` (a rebased
 branch is no longer a fast-forward), and wait for the checks on the new head; Codex needn't review
 again unless the rebase changed the diff, and the owner's yes still stands. A merge by rebase
