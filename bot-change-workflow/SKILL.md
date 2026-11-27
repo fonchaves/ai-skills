@@ -44,6 +44,14 @@ decisions already taken, no plan (the pull request says how). When an investigat
 fix, the issue starts there and names what the investigation found. An issue that arrived labeled
 `bot`: swap the label for `bot:working`.
 
+Your own label changes wake you. Orca's GitHub app wakes the project's bot in a new conversation
+("Take over issue labeled ...") whenever an issue's label changes, even when you or your worker
+changed it as the owner, and that run's final message is posted on the issue. When such a wake names
+an issue you or your worker already hold (you opened it, a worker runs on it, or the pull request
+that closes it is yours), it is the echo of your own step: start nothing, and end the run with one
+line saying where the work stands (the worker, or the pull request's link), without mentioning the
+owner, since a mention notifies them for nothing.
+
 If you run on a lighter model (a scheduled run on Sonnet, say) and part of the issue needs deep
 reasoning (hard debugging, security, migrations, architecture), delegate that part to a Claude
 worker with `--model opus --effort high`. If the whole issue is like that, or needs the owner's
@@ -62,15 +70,37 @@ retried workspace), so the name you asked for can point at another worktree. For
 start a worker in that same worktree, selected by what `worktree create` returned (`orca agent
 launch --worktree id:<returned id> --agent ... --effort ...`), chosen as the owner's global rules say: Antigravity by default, Claude when the task needs it,
 never Codex, whose quota is kept for review. Review the worker's result before anything is pushed.
+A report a worker writes to a file stays in its agent's own folders on the server, outside the
+repository, and is lost with the session: carry what later steps need into the issue, a follow-up
+issue or the pull request.
+
+Problems you find on the way that the change doesn't need (a bug elsewhere, a finding moved out of
+the pull request) become follow-up issues with no label. List them to the owner with your report;
+they label `bot` the ones to queue.
 
 Run the checks AGENTS.md asks for the change, follow its commit and release-note rules, and open a
 pull request that says `Closes #<issue>`. Swap the label for `bot:review`.
 
 ## 5. Codex's review rounds
 
-Codex reviews a pull request on its own only when it opens. After each round of fixes, answer every
-one of its comments (what was fixed in which commit, or why it doesn't apply), push, and comment
-`@codex review` to ask for the next round, within the round limits AGENTS.md sets.
+Codex reviews a pull request on its own only when it opens. After each round of fixes, push, and
+comment `@codex review` to ask for the next round.
+
+What gets fixed in the pull request, unless AGENTS.md sets other limits:
+
+- P1 and security findings: always.
+- P2 findings within the pull request's scope: during the first three rounds. From the fourth, each
+  new P2 goes to a follow-up issue (or the backlog file AGENTS.md names) and the pull request moves
+  on to Pilho. Every round finds rarer cases, and each costs a review and a worker's run.
+- A finding about a pattern the whole app shares (every GET handler, every form): to a follow-up
+  issue at once. Fixing it one instance at a time only shows Codex the next instance, round after
+  round.
+
+Answer every comment: what was fixed in which commit, why it doesn't apply, or which follow-up issue
+now carries it. Then resolve the thread, whatever the answer. Codex's summary and Pilho's gate count
+an open thread as an unresolved finding even once it is answered, and a gate that stays closed
+pushes the deferred work back into the pull request. Pilho reads the answers and can still say "not
+yet".
 
 Don't poll. Schedule a wake on the pull request's CI result and next review with `orca automations
 create --once`, with a deadline of about 30 minutes. A review with findings wakes you; a clean one
@@ -120,7 +150,8 @@ A yes covers only the pull request it answers.
 
 ## 8. Clean up
 
-After a successful deploy (or the merge, when nothing deploys), report it in one line, remove your
+After a successful deploy (or the merge, when nothing deploys), report it in one line, with the
+follow-up issues you opened, if any, and ask which to queue. Remove your
 `bot:*` label from the issue the merge closed, and remove the change's worktree (`orca worktree
 rm`); the branch is already gone from GitHub.
 
