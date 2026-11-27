@@ -41,6 +41,12 @@ mkdir -p ~/.gemini/config/skills && ln -s "$PWD/penpot-design" ~/.gemini/config/
 
 Start a new agent session after installing. Agents read the skill list when a session starts.
 
+Orca bots don't read the user-wide folders: Orca links into each bot's session the skills it
+finds in the `.agents/skills/` (or `.claude/skills/`) folder of the projects set as the bot's
+skill sources. `.agents/skills/` here holds links to the skills meant for the owner's bots
+(`bot-change-workflow`, `release-notes`), so adding this repository as a bot's skill source in
+Orca gives it those two.
+
 You don't need to name a skill when you ask for something. The agent reads each skill's
 `description` and loads the skill when the request matches it. For example, with the Penpot MCP
 connected, "design a login screen for a banking app" loads `penpot-design`.
