@@ -157,11 +157,13 @@ it is ready for their review.
 
 ## 7. Asking, merging and deploying
 
-Before asking, check that the pull request's last checks ran on top of the current `main`. If `main`
-moved since (another pull request merged), rebase the branch on `origin/main`, push it, and wait for
-the checks on the new head; Codex needn't review again unless the rebase changed the diff. A merge
-by rebase otherwise lands a combination of commits that no check ever ran, and the merge before it
-may have changed the checks themselves.
+Before asking, and again right before merging, check that the pull request's last checks ran on top
+of the current `main`. If `main` moved since (another pull request merged, even while the owner was
+deciding), rebase the branch on `origin/main`, push it with `git push --force-with-lease` (a rebased
+branch is no longer a fast-forward), and wait for the checks on the new head; Codex needn't review
+again unless the rebase changed the diff, and the owner's yes still stands. A merge by rebase
+otherwise lands a combination of commits that no check ever ran, and the merge before it may have
+changed the checks themselves.
 
 Every question about merging also says what the deploy takes along: the merges already on `main`
 that the environment doesn't run yet (AGENTS.md says how to read what it runs). End it with "Posso
